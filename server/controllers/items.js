@@ -35,7 +35,9 @@ const create = (req, res) => {
 
 const read = async (req, res) => {
 
-  await item.find({}, (err, items) => {
+  console.log(req)
+
+  await Item.find({}, (err, items) => {
 
     if (err) {
       return res.status(400).json({

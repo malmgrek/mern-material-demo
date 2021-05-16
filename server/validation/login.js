@@ -1,5 +1,5 @@
 const Validator = require("validator");
-const isEmpty = require("is-empty");
+const empty = require("is-empty");
 
 
 const validateLoginInput = (data) => {
@@ -7,8 +7,8 @@ const validateLoginInput = (data) => {
   let errors = {};
 
   // Convert empty fields to empty strings so we can use validator function
-  data.email = !isEmpty(data.email) ? data.email : "";
-  data.password = !isEmpty(data.password) ? data.password: "";
+  data.email = !empty(data.email) ? data.email : "";
+  data.password = !empty(data.password) ? data.password: "";
 
   if (Validator.isEmpty(data.email)) {
     errors.email = "Email field is required.";
@@ -21,7 +21,7 @@ const validateLoginInput = (data) => {
     errors.password = "Password field is required.";
   }
 
-  return { errors, isValid: isEmpty(errors) }
+  return { errors, isValid: empty(errors) }
 
 }
 

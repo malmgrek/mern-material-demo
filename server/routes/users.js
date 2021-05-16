@@ -14,3 +14,6 @@ router.post("/register", controllers.register);
 // @desc Login user and create a JWT token
 // @access Public
 router.post("/login", controllers.login)
+
+
+module.exports = router;

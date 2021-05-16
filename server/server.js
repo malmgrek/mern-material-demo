@@ -20,7 +20,7 @@ mongoose
   .on("error", console.error.bind(console, "MongoDB connection error:"));
 
 
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.json());
 app.use("/api/items", items);

@@ -131,9 +131,149 @@ const del = async (req, res) => {
 }
 
 
+const take = async (req, res) => {
+
+  const userId = req.currentUser._id.toString();
+
+  if (!userId) {
+    return res.status(400).json({
+      success: false,
+      error: "No user id given."
+    })
+  }
+
+  // NOTE: Not writing `await` here makes it non-blocking
+  Item.findOne({ _id: req.params.id }, (err, item) => {
+
+    if (err) {
+      return res.status(404).json({
+        err,
+        message: "Item not found."
+      })
+    }
+
+    if (item.userId) {
+      return res.status(403).json({
+        success: false,
+        error: "Item already in use."
+      })
+    }
+
+    Object.assign(item, { userId: userId });
+
+    item
+      .save()
+      .then(() => {
+        return res.status(200).json({
+          success: true,
+          id: item._id,
+          message: "This item is now taken."
+        })
+      })
+      .catch(error => {
+        return res.status(404).json({
+          error,
+          message: "Taking failed."
+        })
+      });
+
+  });
+
+}
+
+
+const release = async (req, res) => {
+
+  const userId = req.currentUser._id.toString();
+
+  Item.findOne({ _id: req.params.id }, (err, item) => {
+
+    if (err) {
+      return res.status(404).json({
+        err,
+        message: "Something went wrong."
+      })
+    }
+
+    if (item.userId != userId) {
+      return res.status(403).json({
+        success: false,
+        error: "Unauthorized release."
+      })
+    }
+
+    Object.assign(item, { userId: null });
+
+    item
+      .save()
+      .then(() => {
+        return res.status(200).json({
+          success: true,
+          id: item._id,
+          message: "Item released."
+        })
+      })
+      .catch(error => {
+        return res.status(404).json({
+          error,
+          message: "Reservation failed"
+        })
+      });
+
+  });
+  
+}
+
+
+const readTaken = async (req, res) => {
+
+  await Item.find({ userId: req.currentUser._id }, (err, items) => {
+
+    if (err) {
+      return res.status(400).json({
+        success: false,
+        error: err
+      })
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: items
+    })
+
+  });
+
+}
+
+
+const readFree = async (req, res) => {
+
+  await Item.find({ userId: null }, (err, items) => {
+
+    if (err) {
+      return res.status(400).json({
+        success: false,
+        error: err
+      })
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: items
+    })
+
+  });
+
+}
+
+
 module.exports = {
   create,
   read,
   update,
-  del
+  del,
+  take,
+  release,
+  readTaken,
+  readFree
 };

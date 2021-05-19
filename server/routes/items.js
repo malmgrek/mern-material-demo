@@ -1,6 +1,6 @@
 const express = require("express");
 const controllers = require("../controllers/items");
-// const users = require("../controllers/users")
+const users = require("../controllers/users")
 
 
 const router = express.Router();
@@ -21,6 +21,22 @@ router.post("/", controllers.create);
 // @desc List existing items
 // @access Public
 router.get("/", controllers.read);
+// @route GET api/items/taken
+// @desc List item taken by the current user
+// @access Public
+router.get("/taken", users.verifyToken, controllers.readTaken);
+// @route GET api/items/free
+// @desc List free items
+// @access Public
+router.get("/free", controllers.readFree);
+// @route GET api/items/take/{id}
+// @desc Take item
+// @access Protected
+router.get("/take/:id", users.verifyToken, controllers.take);
+// @route GET api/items/release/{id}
+// @desc Release item
+// @access Protected
+router.get("/release/:id", users.verifyToken, controllers.release);
 
 // @route PUT api/items/{id}
 // @desc Update item

@@ -13,7 +13,7 @@ const validateLoginInput = (data) => {
   if (Validator.isEmpty(data.email)) {
     errors.email = "Email field is required.";
   }
-  if (Validator.isEmail(data.email)) {
+  if (!Validator.isEmail(data.email)) {
     errors.email = "Email is invalid.";
   }
 
@@ -26,4 +26,4 @@ const validateLoginInput = (data) => {
 }
 
 
-module.exports = { validateLoginInput };
+module.exports = validateLoginInput;

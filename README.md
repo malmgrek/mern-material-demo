@@ -1,7 +1,7 @@
-# MERN Material demo web application
+# MERN Material UI demo web application
 
 This project implements a web application skeleton within the JavaScript
-ecosystem. More precisely _Mongo-Express-React-Node_ stack is used. 
+ecosystem. More precisely _Mongo-Express-React-Node_ stack is used.
 
 ## Server
 
@@ -11,3 +11,7 @@ ecosystem. More precisely _Mongo-Express-React-Node_ stack is used.
 
 - Material UI React components
 - State management with React-Redux
+
+## Installation
+
+TODO

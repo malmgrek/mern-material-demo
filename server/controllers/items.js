@@ -34,8 +34,6 @@ const create = (req, res) => {
 };
 
 const read = async (req, res) => {
-  console.log(req);
-
   await Item.find({}, (err, items) => {
     if (err) {
       return res.status(400).json({
@@ -51,14 +49,11 @@ const read = async (req, res) => {
       });
     }
 
-    return res
-      .status(200)
-      .json({
-        success: true,
-        data: items,
-      })
-      .catch((err) => console.log(err));
-  });
+    return res.status(200).json({
+      success: true,
+      data: items,
+    });
+  }).catch((err) => console.log(err));
 };
 
 const update = async (req, res) => {

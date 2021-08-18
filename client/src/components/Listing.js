@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Button,
   Card,
@@ -14,12 +14,15 @@ import {
 } from "@material-ui/core";
 import Rating from "@material-ui/lab/Rating";
 
-import api from "../api";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getAvailableItems,
+  addItemToReservations,
+  getReservations,
+} from "../actions/itemActions";
 
-// TODO: To functional form
 // TODO: Refactor query result as props
 // TODO: Search field
-// TODO: Display image
 
 const styles = (theme) => ({
   icon: {
@@ -54,25 +57,19 @@ const styles = (theme) => ({
   },
 });
 
-const Listing = (props) => {
-  const [items, setItems] = useState(null);
+const Listing = ({ classes }) => {
+  const dispatch = useDispatch();
+  const { available } = useSelector((state) => state.items);
 
   useEffect(() => {
-    const getFreeItems = async () => {
-      const {
-        data: { data },
-      } = await api.readFreeItems();
-      setItems(data);
-    };
-    getFreeItems();
-  }, []);
+    dispatch(getAvailableItems());
+    dispatch(getReservations());
+  }, [dispatch]);
 
-  async function handleTakeClick(id) {
-    const { data } = await api.takeItem(id);
-    setItems(items.filter((item) => item._id !== data.id));
+  function handleTakeClick(id) {
+    dispatch(addItemToReservations(id, available));
   }
 
-  const { classes } = props;
   return (
     <>
       <CssBaseline />
@@ -113,48 +110,46 @@ const Listing = (props) => {
             </div>
           </Container>
         </div>
-        {!items ? null : (
-          <Container className={classes.cardGrid} maxWidth="md">
-            {/* End hero unit */}
-            <Grid container spacing={4}>
-              {items.map((item) => (
-                <Grid item key={item._id} xs={12} sm={6} md={4}>
-                  <Card className={classes.card}>
-                    <CardMedia
-                      className={classes.cardMedia}
-                      image={item.imgUrl}
-                      title="Image title"
+        <Container className={classes.cardGrid} maxWidth="md">
+          {/* End hero unit */}
+          <Grid container spacing={4}>
+            {available.map((item) => (
+              <Grid item key={item.id} xs={12} sm={6} md={4}>
+                <Card className={classes.card}>
+                  <CardMedia
+                    className={classes.cardMedia}
+                    image={item.imgUrl}
+                    title="Image title"
+                  />
+                  <CardContent className={classes.cardContent}>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      {item.name}
+                    </Typography>
+                    <Typography>{item.description}</Typography>
+                    <Rating
+                      name="half-rating"
+                      value={item.rating}
+                      defaultValue={0.0}
+                      precision={0.5}
                     />
-                    <CardContent className={classes.cardContent}>
-                      <Typography gutterBottom variant="h5" component="h2">
-                        {item.name}
-                      </Typography>
-                      <Typography>{item.description}</Typography>
-                      <Rating
-                        name="half-rating"
-                        value={item.rating}
-                        defaultValue={0.0}
-                        precision={0.5}
-                      />
-                    </CardContent>
-                    <CardActions>
-                      <Button size="small" color="primary">
-                        Info
-                      </Button>
-                      <Button
-                        size="small"
-                        color="primary"
-                        onClick={() => handleTakeClick(item._id)}
-                      >
-                        Take
-                      </Button>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          </Container>
-        )}
+                  </CardContent>
+                  <CardActions>
+                    <Button size="small" color="primary">
+                      Info
+                    </Button>
+                    <Button
+                      size="small"
+                      color="primary"
+                      onClick={() => handleTakeClick(item.id)}
+                    >
+                      Take
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
       </main>
     </>
   );

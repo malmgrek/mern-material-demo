@@ -1,11 +1,6 @@
 import axios from "axios";
 
-const baseUrl = "/api/users";
+const url = "/api/users";
 
-export const register = (userData) => {
-  return axios.post(`${baseUrl}/register`, userData);
-};
-
-export const login = (userData) => {
-  return axios.post(`${baseUrl}/login`, userData);
-};
+export const register = (userData) => axios.post(`${url}/register`, userData);
+export const login = (userData) => axios.post(`${url}/login`, userData);

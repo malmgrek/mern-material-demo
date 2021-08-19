@@ -19,7 +19,6 @@ import Rating from "@material-ui/lab/Rating";
 import {
   getAvailableItems,
   addItemToReservations,
-  getReservations,
 } from "../actions/itemActions";
 
 // TODO: Refactor query result as props
@@ -64,7 +63,6 @@ const Listing = ({ classes }) => {
 
   useEffect(() => {
     dispatch(getAvailableItems());
-    dispatch(getReservations());
   }, [dispatch]);
 
   function handleTakeClick(id) {

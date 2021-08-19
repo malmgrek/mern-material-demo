@@ -50,7 +50,7 @@ const Register = ({ classes, history }) => {
       .required("Password is required"),
     password2: yup
       .string()
-      .required()
+      .required("Field required")
       .oneOf([yup.ref("password"), null], "Passwords must match"),
   });
 

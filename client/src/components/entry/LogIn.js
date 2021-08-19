@@ -26,7 +26,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link } from "react-router-dom";
 
-export const LogIn = ({ classes, history }) => {
+const LogIn = ({ classes, history }) => {
   const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state) => state.auth);
   const { errors } = useSelector((state) => state);
@@ -42,7 +42,7 @@ export const LogIn = ({ classes, history }) => {
   };
 
   const validationSchema = yup.object().shape({
-    email: yup.string().required("Required"),
+    email: yup.string().email("Not a valid email").required("Required"),
     password: yup.string().required("Required"),
   });
 
@@ -94,9 +94,7 @@ export const LogIn = ({ classes, history }) => {
             name="password"
             label="Password"
             {...register("password")}
-            error={
-              fieldError.password || errors.passwordincorrect ? true : false
-            }
+            error={fieldError.password || showServerError ? true : false}
             helperText={
               fieldError.password ? fieldError.password.message : serverErrorMsg
             }

@@ -1,5 +1,7 @@
 import PropTypes from "prop-types";
 import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import {
   Button,
   Card,
@@ -14,7 +16,6 @@ import {
 } from "@material-ui/core";
 import Rating from "@material-ui/lab/Rating";
 
-import { useDispatch, useSelector } from "react-redux";
 import {
   getAvailableItems,
   addItemToReservations,
@@ -59,7 +60,7 @@ const styles = (theme) => ({
 
 const Listing = ({ classes }) => {
   const dispatch = useDispatch();
-  const { available } = useSelector((state) => state.items);
+  const items = useSelector((state) => state.items);
 
   useEffect(() => {
     dispatch(getAvailableItems());
@@ -67,7 +68,7 @@ const Listing = ({ classes }) => {
   }, [dispatch]);
 
   function handleTakeClick(id) {
-    dispatch(addItemToReservations(id, available));
+    dispatch(addItemToReservations(id, items.available));
   }
 
   return (
@@ -113,7 +114,7 @@ const Listing = ({ classes }) => {
         <Container className={classes.cardGrid} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>
-            {available.map((item) => (
+            {items.available.map((item) => (
               <Grid item key={item.id} xs={12} sm={6} md={4}>
                 <Card className={classes.card}>
                   <CardMedia

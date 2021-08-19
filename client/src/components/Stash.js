@@ -14,7 +14,7 @@ import { getReservations, removeItem } from "../actions/itemActions";
 
 const Stash = () => {
   const dispatch = useDispatch();
-  const { reservations } = useSelector((state) => state.items);
+  const { reservations } = useSelector((state) => state.items) || [];
 
   useEffect(() => {
     dispatch(getReservations());
@@ -30,7 +30,7 @@ const Stash = () => {
       <main>
         <div style={{ height: 400, width: "90%", margin: "auto" }}>
           <DataGrid
-            rows={reservations ? reservations : []}
+            rows={reservations}
             columns={[
               { field: "name", headerName: "Name", width: 300 },
               {

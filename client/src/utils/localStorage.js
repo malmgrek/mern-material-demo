@@ -1,31 +1,27 @@
+const getItem = (key) => JSON.parse(localStorage.getItem(key));
+const setItem = (key, value) =>
+  localStorage.setItem(key, JSON.stringify(value));
+
 export const addToLocalStorage = (reservation) => {
-  const reservations = localStorage.getItem("reservations");
+  const reservations = getItem("reservations");
 
   if (!reservations) {
-    localStorage.setItem("reservations", JSON.stringify([reservation]));
+    setItem("reservations", [reservation]);
   } else {
-    const reservationsFromLocalStorage = JSON.parse(
-      localStorage.getItem("reservations")
-    );
-    localStorage.setItem(
-      "reservations",
-      JSON.stringify([...reservationsFromLocalStorage, reservation])
-    );
+    setItem("reservations", [...reservations, reservation]);
   }
 };
 
 export const removeFromLocalStorage = (id) => {
-  const reservations = JSON.parse(localStorage.getItem("reservations"));
+  const reservations = getItem("reservations");
+
   if (reservations) {
-    localStorage.setItem(
-      "reservations",
-      JSON.stringify(reservations.filter((item) => item.id !== id))
-    );
+    const filtered = reservations.filter((item) => item.id !== id);
+    setItem("reservations", filtered);
   }
 
-  const updatedReservations = JSON.parse(localStorage.getItem("reservations"));
-  const noReservations = updatedReservations.length === 0;
-  if (noReservations) {
+  const reservationsLeft = getItem("reservations").length;
+  if (!reservationsLeft) {
     localStorage.removeItem("reservations");
   }
 };

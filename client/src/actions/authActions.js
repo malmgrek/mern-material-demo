@@ -2,23 +2,23 @@ import jwt_decode from "jwt-decode";
 import { login, register } from "../services/userServices";
 
 import setAuthToken from "../utils/setAuthToken";
-import { GET_ERRORS, SET_CURRENT_USER } from "./types";
+import { SET_CURRENT_USER } from "./types";
 
-export const registerUser = (userData, history) => {
-  return async (dispatch) => {
+export const registerUser = (userData, history, setError) => {
+  return async () => {
     try {
       await register(userData);
       history.push("/login");
     } catch (err) {
-      dispatch({
-        type: GET_ERRORS,
-        payload: err.response.data,
+      console.log(err.message);
+      setError("email", {
+        message: "Email already exists",
       });
     }
   };
 };
 
-export const loginUser = (userData) => {
+export const loginUser = (userData, setError) => {
   return async (dispatch) => {
     try {
       const res = await login(userData);
@@ -28,9 +28,9 @@ export const loginUser = (userData) => {
       const decoded = jwt_decode(token);
       dispatch(setCurrentUser(decoded));
     } catch (err) {
-      dispatch({
-        type: GET_ERRORS,
-        payload: err.response.data,
+      setError("email");
+      setError("password", {
+        message: "Wrong email or password",
       });
     }
   };

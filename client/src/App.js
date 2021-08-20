@@ -7,8 +7,8 @@ import setAuthToken from "./utils/setAuthToken";
 
 import AppBar from "./components/AppBar";
 import Listing from "./components/Listing"; // Items listing
-import LogIn from "./components/entry/LogIn";
-import Register from "./components/entry/Register";
+import LogIn from "./components/auth/LogIn";
+import Register from "./components/auth/Register";
 import PrivateRoute from "./components/PrivateRoute";
 import Stash from "./components/Stash"; // TODO: Staging area
 import { useDispatch } from "react-redux";

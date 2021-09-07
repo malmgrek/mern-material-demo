@@ -6,7 +6,7 @@ const create = (req, res) => {
   if (!body) {
     return res.status(400).json({
       success: false,
-      error: "Must proved an item",
+      error: "Must provide an item.",
     });
   }
 

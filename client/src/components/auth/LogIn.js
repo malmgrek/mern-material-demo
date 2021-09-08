@@ -30,6 +30,7 @@ const LogIn = ({ classes, history }) => {
   const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state) => state.auth);
 
+  // If logged in and user navigates to SignIn page, redirects them to listing
   useEffect(() => {
     if (isAuthenticated) {
       history.push("/listing");

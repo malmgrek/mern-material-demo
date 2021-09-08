@@ -21,7 +21,6 @@ import {
   addItemToReservations,
 } from "../actions/itemActions";
 
-// TODO: Refactor query result as props
 // TODO: Search field
 
 const styles = (theme) => ({

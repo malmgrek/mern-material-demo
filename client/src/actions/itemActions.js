@@ -5,8 +5,6 @@ import {
   removeFromLocalStorage,
 } from "../utils/localStorage";
 
-// TODO: Handle error messages
-
 export const getAvailableItems = () => {
   return async (dispatch) => {
     try {

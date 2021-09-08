@@ -3,25 +3,23 @@ const setItem = (key, value) =>
   localStorage.setItem(key, JSON.stringify(value));
 
 export const addToLocalStorage = (reservation) => {
+  // Get existing reservatios (if any) and update list
   const reservations = getItem("reservations");
-
-  if (!reservations) {
-    setItem("reservations", [reservation]);
-  } else {
-    setItem("reservations", [...reservations, reservation]);
-  }
+  setItem("reservations", !reservations ?
+          [reservation] : [...reservations, reservation]);
 };
 
 export const removeFromLocalStorage = (id) => {
+  // Update reservations field with the remaining ones. If none are left, wipe
+  // the key from storage.
   const reservations = getItem("reservations");
-
   if (reservations) {
-    const filtered = reservations.filter((item) => item.id !== id);
-    setItem("reservations", filtered);
+    const reservationsLeft = reservations.filter((item) => item.id !== id);
+    if (reservationsLeft.length) {
+      setItem("reservations", reservationsLeft);
+    } else {
+      localStorage.removeItem("reservations");
+    }
   }
 
-  const reservationsLeft = getItem("reservations").length;
-  if (!reservationsLeft) {
-    localStorage.removeItem("reservations");
-  }
 };

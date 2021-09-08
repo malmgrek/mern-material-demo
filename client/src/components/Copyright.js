@@ -10,7 +10,7 @@ const Copyright = () => {
         to={{ pathname: "https://github.com/malmgrek" }}
         target="_blank"
       >
-        Malmgrek
+        Malmgrek/Metepg
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}

@@ -1,50 +1,52 @@
-import axios from "axios";
 import jwt_decode from "jwt-decode";
+import { login, register } from "../services/userServices";
 
 import setAuthToken from "../utils/setAuthToken";
-import { GET_ERRORS, SET_CURRENT_USER } from "./types";
+import { SET_CURRENT_USER } from "./types";
 
-
-export const registerUser = (userData, history) => dispatch => {
-  axios
-    .post("/api/users/register", userData)
-    .then(res => history.push("/login"))
-    .catch(err =>
-      dispatch({
-        type: GET_ERRORS,
-        payload: err.response.data
-      })
-    );
+export const registerUser = (userData, history, setError) => {
+  return async () => {
+    try {
+      await register(userData);
+      history.push("/login");
+    } catch (err) {
+      console.log(err.message);
+      setError("email", {
+        message: "Email already exists",
+      });
+    }
+  };
 };
 
-
-export const loginUser = userData => dispatch => {
-  axios
-    .post("/api/users/login", userData)
-    .then(res => {
+export const loginUser = (userData, setError) => {
+  return async (dispatch) => {
+    try {
+      const res = await login(userData);
       const { token } = res.data;
       localStorage.setItem("jwtToken", token);
       setAuthToken(token);
       const decoded = jwt_decode(token);
       dispatch(setCurrentUser(decoded));
-    })
-    .catch(err => dispatch({
-      type: GET_ERRORS,
-      payload: err.response.data
-    }));
+    } catch (err) {
+      setError("email");
+      setError("password", {
+        message: "Wrong email or password",
+      });
+    }
+  };
 };
 
-
-export const setCurrentUser = decoded => {
+export const setCurrentUser = (decoded) => {
   return {
     type: SET_CURRENT_USER,
-    payload: decoded
-  }
+    payload: decoded,
+  };
 };
 
-
-export const logoutUser = () => dispatch => {
+export const logoutUser = () => {
   localStorage.removeItem("jwtToken");
   setAuthToken(false);
-  dispatch(setCurrentUser({}));
+  return {
+    type: "USER_LOGOUT",
+  };
 };

@@ -1,28 +1,30 @@
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import React from "react";
+import React, { useEffect } from "react";
 
 import { fade, makeStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
-import InputBase from "@material-ui/core/InputBase";
-import Badge from "@material-ui/core/Badge";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
+import {
+  AppBar,
+  Badge,
+  Toolbar,
+  IconButton,
+  Typography,
+  InputBase,
+  MenuItem,
+  Menu,
+} from "@material-ui/core";
+
+import AccountCircle from "@material-ui/icons/AccountCircle";
+import MailIcon from "@material-ui/icons/Mail";
 import MenuIcon from "@material-ui/icons/Menu";
+import MoreIcon from "@material-ui/icons/MoreVert";
+import NotificationsIcon from "@material-ui/icons/Notifications";
 import SearchIcon from "@material-ui/icons/Search";
 import ShoppingBasket from "@material-ui/icons/ShoppingBasket";
 import Storefront from "@material-ui/icons/Storefront";
-import AccountCircle from "@material-ui/icons/AccountCircle";
-import MailIcon from "@material-ui/icons/Mail";
-import NotificationsIcon from "@material-ui/icons/Notifications";
-import MoreIcon from "@material-ui/icons/MoreVert";
 
 import { logoutUser } from "../actions/authActions";
-
+import { getReservations } from "../actions/itemActions";
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -88,14 +90,23 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
-const PrimarySearchAppBar = ({ component: Component, auth, logoutUser, ...rest }) => {
+const PrimarySearchAppBar = ({ component: Component, ...rest }) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+  const dispatch = useDispatch();
+  const { reservations } = useSelector((state) => state.items);
+  const { isAuthenticated } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(getReservations());
+    }
+  }, [dispatch, isAuthenticated]);
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -114,11 +125,11 @@ const PrimarySearchAppBar = ({ component: Component, auth, logoutUser, ...rest }
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
-  const onLogoutClick = e => {
+  const onLogoutClick = (e) => {
     e.preventDefault();
-    logoutUser();
+    dispatch(logoutUser());
     handleMenuClose();
-  }
+  };
 
   const menuId = "primary-search-account-menu";
   const renderMenu = (
@@ -131,13 +142,30 @@ const PrimarySearchAppBar = ({ component: Component, auth, logoutUser, ...rest }
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      {auth.isAuthenticated ?
-       <MenuItem onClick={onLogoutClick} component={Link} to="/">Log out</MenuItem>:
-       [
-         <MenuItem key="1" onClick={handleMenuClose} component={Link} to="/register">Register</MenuItem>,
-         <MenuItem key="2" onClick={handleMenuClose} component={Link} to="/login">Log in</MenuItem>
-       ]
-      }
+      {isAuthenticated ? (
+        <MenuItem onClick={onLogoutClick} component={Link} to="/">
+          Log out
+        </MenuItem>
+      ) : (
+        [
+          <MenuItem
+            key="1"
+            onClick={handleMenuClose}
+            component={Link}
+            to="/register"
+          >
+            Register
+          </MenuItem>,
+          <MenuItem
+            key="2"
+            onClick={handleMenuClose}
+            component={Link}
+            to="/login"
+          >
+            Log in
+          </MenuItem>,
+        ]
+      )}
     </Menu>
   );
 
@@ -164,47 +192,39 @@ const PrimarySearchAppBar = ({ component: Component, auth, logoutUser, ...rest }
         <p>Profile</p>
       </MenuItem>
       <MenuItem>
-        <IconButton aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="secondary">
+        <IconButton aria-label="new emails" color="inherit">
+          <Badge badgeContent={0} color="secondary">
             <MailIcon />
           </Badge>
         </IconButton>
         <p>Messages</p>
       </MenuItem>
       <MenuItem>
-        <IconButton aria-label="show 11 new notifications" color="inherit">
-          <Badge badgeContent={11} color="secondary">
+        <IconButton aria-label="new notifications" color="inherit">
+          <Badge badgeContent={0} color="secondary">
             <NotificationsIcon />
           </Badge>
         </IconButton>
         <p>Notifications</p>
       </MenuItem>
-      {auth.isAuthenticated ?
-        [
-          <MenuItem
-            key="1"
-            component={Link}
-            to="/stash"
-          >
-            <IconButton aria-label="user reservations" color="inherit">
-              <Badge badgeContent={0} color="secondary">
-                <ShoppingBasket />
-              </Badge>
-            </IconButton>
-            <p>Stash</p>
-          </MenuItem>,
-          <MenuItem
-            key="2"
-            component={Link}
-            to="/listing"
-          >
-            <IconButton aria-label="marketplace" color="inherit">
-              <Storefront />
-            </IconButton>
-            <p>Listing</p>
-          </MenuItem>
-        ] : null
-      }
+      {isAuthenticated
+        ? [
+            <MenuItem key="1" component={Link} to="/stash">
+              <IconButton aria-label="user reservations" color="inherit">
+                <Badge badgeContent={reservations.length} color="secondary">
+                  <ShoppingBasket />
+                </Badge>
+              </IconButton>
+              <p>Stash</p>
+            </MenuItem>,
+            <MenuItem key="2" component={Link} to="/listing">
+              <IconButton aria-label="marketplace" color="inherit">
+                <Storefront />
+              </IconButton>
+              <p>Listing</p>
+            </MenuItem>,
+          ]
+        : null}
     </Menu>
   );
 
@@ -238,37 +258,37 @@ const PrimarySearchAppBar = ({ component: Component, auth, logoutUser, ...rest }
           </div>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            {auth.isAuthenticated ?
-             [
-               <IconButton
-                 aria-label="user reservations"
-                 color="inherit"
-                 component={Link}
-                 to="/stash"
-                 key="1"
-               >
-                 <Badge badgeContent={0} color="secondary">
-                   <ShoppingBasket />
-                 </Badge>
-               </IconButton>,
-               <IconButton
-                 aria-label="marketplace"
-                 color="inherit"
-                 component={Link}
-                 to="/listing"
-                 key="2"
-               >
-                 <Storefront />
-               </IconButton>
-             ] : null
-            }
-            <IconButton aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={4} color="secondary">
+            {isAuthenticated
+              ? [
+                  <IconButton
+                    aria-label="user reservations"
+                    color="inherit"
+                    component={Link}
+                    to="/stash"
+                    key="1"
+                  >
+                    <Badge badgeContent={reservations.length} color="secondary">
+                      <ShoppingBasket />
+                    </Badge>
+                  </IconButton>,
+                  <IconButton
+                    aria-label="marketplace"
+                    color="inherit"
+                    component={Link}
+                    to="/listing"
+                    key="2"
+                  >
+                    <Storefront />
+                  </IconButton>,
+                ]
+              : null}
+            <IconButton aria-label="new mails" color="inherit">
+              <Badge badgeContent={0} color="secondary">
                 <MailIcon />
               </Badge>
             </IconButton>
-            <IconButton aria-label="show 17 new notifications" color="inherit">
-              <Badge badgeContent={17} color="secondary">
+            <IconButton aria-label="new notifications" color="inherit">
+              <Badge badgeContent={0} color="secondary">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
@@ -300,21 +320,6 @@ const PrimarySearchAppBar = ({ component: Component, auth, logoutUser, ...rest }
       {renderMenu}
     </div>
   );
-}
-
-
-PrimarySearchAppBar.propTypes = {
-  logoutUser: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired
 };
 
-
-const mapStateToProps = state => ({
-  auth: state.auth
-});
-
-
-export default connect(
-  mapStateToProps,
-  { logoutUser }
-)(PrimarySearchAppBar);
+export default PrimarySearchAppBar;

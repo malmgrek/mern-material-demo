@@ -5,7 +5,16 @@ const schema = new mongoose.Schema({
   description: { type: String, required: true },
   imgUrl: { type: String },
   rating: { type: Number },
-  userId: {type: String}
-})
+  userId: { type: String },
+});
 
-module.exports = Item = mongoose.model("items", schema);
+schema.set("toJSON", {
+  virtuals: true,
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString();
+    delete returnedObject._id;
+    delete returnedObject.__v;
+  },
+});
+
+module.exports = mongoose.model("items", schema);

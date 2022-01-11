@@ -1,7 +1,7 @@
 {
-  "name": "client",
+  "name": "mern-material-demo-client",
   "version": "0.1.0",
-  "description": "MERN Material demo",
+  "description": "Frontend for MERN Material demo",
   "private": true,
   "proxy": "http://localhost:3000",
   "dependencies": {

@@ -1,7 +1,7 @@
 {
-  "name": "mern-material-demo",
+  "name": "mern-material-demo-server",
   "version": "0.0.1",
-  "description": "Node + React full-stack demo",
+  "description": "Backend for MERN Material Demo",
   "main": "server.js",
   "author": "malmgrek",
   "license": "MIT",
